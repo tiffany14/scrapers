@@ -11,7 +11,7 @@ NO_INFORMATIONS  = "-BLANK-"
 C_TIME_TEXT_ENC  = "{}"
 
 base_url         = 'https://api.instagram.com/v1'
-authorization_t  = '?access_token='
+authorization_t  = '?access_token=' ###ADD YOUR AUTHORIZATION NUMBER HERE
 # Info Types
 media_by_popular = '/media/popular'
 media_by_id      = '/media/{}'
