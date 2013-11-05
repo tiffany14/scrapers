@@ -154,6 +154,8 @@ def location_tagged_dataset(dataset):
 
 
 
+# Just simple numbered data that can easily be extracted
+
 def basic_numerical_feature_extractor(data_point):
   feature_vector     = []
   numerics_data_keys = ["image_comment_count","user_media_count","user_followed_by_count","user_follows_count"]
@@ -162,6 +164,54 @@ def basic_numerical_feature_extractor(data_point):
     feature_vector.append(data_point[data_key])
 
   return feature_vector
+
+
+
+# 'sentiment analysis' w/ tags, captions, comment (time,text) tuples
+
+def sentiment_analysis():
+
+  # BEGIN_YOUR_CODE (around ??? lines of code expected)
+  raise Exception("Not implemented yet")
+  # END_YOUR_CODE
+
+  return None
+
+
+
+# 'location clustering' w/ longitude, latitude, location name
+
+def location_clustering():
+
+  # BEGIN_YOUR_CODE (around ??? lines of code expected)
+  raise Exception("Not implemented yet")
+  # END_YOUR_CODE
+  
+  return None
+
+
+
+# 'image relevancy' w/ (last comment time - image creation time), comment count, comment (time,text) tuples, followed by count, likes count
+
+def image_relevancy():
+
+  # BEGIN_YOUR_CODE (around ??? lines of code expected)
+  raise Exception("Not implemented yet")
+  # END_YOUR_CODE
+  
+  return None
+
+
+
+# 'association rules' w/ image, filter, location
+
+def association_rules():
+
+  # BEGIN_YOUR_CODE (around ??? lines of code expected)
+  raise Exception("Not implemented yet")
+  # END_YOUR_CODE
+  
+  return None
 
 
 
@@ -219,52 +269,6 @@ def apply_machine_learning_algorithm(x_dataset, y_dataset, ml_func=linear_model.
   return score
 
 
-
-# 'sentiment analysis' w/ tags, captions, comment (time,text) tuples
-
-def sentiment_analysis():
-
-  # BEGIN_YOUR_CODE (around ??? lines of code expected)
-  raise Exception("Not implemented yet")
-  # END_YOUR_CODE
-
-  return None
-
-
-
-# 'location clustering' w/ longitude, latitude, location name
-
-def location_clustering():
-
-  # BEGIN_YOUR_CODE (around ??? lines of code expected)
-  raise Exception("Not implemented yet")
-  # END_YOUR_CODE
-  
-  return None
-
-
-
-# 'image relevancy' w/ (last comment time - image creation time), comment count, comment (time,text) tuples, followed by count, likes count
-
-def image_relevancy():
-
-  # BEGIN_YOUR_CODE (around ??? lines of code expected)
-  raise Exception("Not implemented yet")
-  # END_YOUR_CODE
-  
-  return None
-
-
-
-# 'association rules' w/ image, filter, location
-
-def association_rules():
-
-  # BEGIN_YOUR_CODE (around ??? lines of code expected)
-  raise Exception("Not implemented yet")
-  # END_YOUR_CODE
-  
-  return None
 
 
 
