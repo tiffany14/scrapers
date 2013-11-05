@@ -1,5 +1,11 @@
+from sklearn import svm
+from sklearn import linear_model
+
+import copy
+import math
 import numpy as np
 
+DEFAULT_TSV_FILE = 'instascrape.tsv'
 DATUM_SPLIT_SIZE = 18
 
 # INDIVIDUAL KEYS IN EACH DATA POINT DICT
@@ -26,7 +32,24 @@ DATUM_SPLIT_SIZE = 18
 # (returned data list is a list of dicts, each 
 # corresponding to one image's worth of metadata)
 
-def extract_from_tsv(filename, max_limit = None):
+
+
+
+# QUICK RUN THROUGH GUIDE
+# Basically, assuming the instascrape.tsv is in the same directory as this file, here's what you'd enter in a terminal:
+#
+# python
+# import feature_extraction as fe
+# data = fe.extract_from_tsv()
+# location_data  = fe.location_tagged_dataset(data)
+# feature_vector = fe.create_feature_vector(data) # it's here where we input a list of feature extractors, right now it's a default if you see the definition below
+# x_data, y_data = feature_vector
+# score = fe.apply_machine_learning_algorithm(x_data, y_data) 
+# print score
+
+
+
+def extract_from_tsv(filename=DEFAULT_TSV_FILE, max_limit = None):
   f         = open(filename, 'r')
   key_line  = f.readline()
   key_names = key_line.strip().split('\t')
@@ -117,6 +140,86 @@ def extract_from_tsv(filename, max_limit = None):
   print "Total data points: " + str(count)
   return data
 
+
+
+def location_tagged_dataset(dataset):
+  location_tagged_data = []
+
+  for ind in xrange(len(dataset)):
+    if dataset[ind]["location_longitude"] is not None and dataset[ind]["location_latitude"] is not None:
+      location_tagged_data.append(copy.deepcopy(dataset[ind]))
+
+  print "Total data points: " + str(len(location_tagged_data))
+  return location_tagged_data
+
+
+
+def basic_numerical_feature_extractor(data_point):
+  feature_vector     = []
+  numerics_data_keys = ["image_comment_count","user_media_count","user_followed_by_count","user_follows_count"]
+
+  for data_key in numerics_data_keys:
+    feature_vector.append(data_point[data_key])
+
+  return feature_vector
+
+
+
+def create_feature_vector(dataset, target_variable="likes_count", extractor_funcs=[basic_numerical_feature_extractor]):
+  # If we have feature extraction functions, apply them here,
+  # and create mega vector to be fed into final algorithm.
+  # 
+  # target_variable is what we are trying to predict
+  #
+  # NOTE: only take in location based extractors if the dataset
+  # passed in is a location dataset
+
+  x_data = []
+  y_data = []
+
+  for datum in dataset:
+
+    x_datum = []
+
+    # apply extraction to a datapoint, append to x_datum
+    for extractor_func in extractor_funcs:
+      x_datum.append(extractor_func(datum))
+
+    x_datum = [ sub_datum for sub_x_datum in x_datum for sub_datum in sub_x_datum ]
+
+    x_data.append(x_datum)
+    y_data.append(datum[target_variable])
+
+  return (x_data,y_data)
+
+
+
+def apply_machine_learning_algorithm(x_dataset, y_dataset, ml_func=linear_model.LinearRegression(), split_proportion=0.20):
+  # Assumes the use of a ML supervised algorithm
+  # Split proportion governs how much to reserve for test set
+  # We will also introduce k-folds cross-validation when we have time to let this run for a while
+  #
+  # IMPORTANT NOTE: the data is naively split right now, but first
+  # we will need to permute the datasets before splitting, since
+  # the data was collected (an assumption with the scraper) in
+  # chronological order - need to avoid "hidden recency" correlations with a naive split
+
+  split_point = int(len(x_dataset)*split_proportion)
+
+  X_train = np.array(x_dataset[split_point:-1])
+  Y_train = np.array(y_dataset[split_point:-1])
+  X_test  = np.array(x_dataset[0:split_point])
+  Y_test  = np.array(y_dataset[0:split_point])
+
+  ml_func.fit(X_train, Y_train)
+
+  score = ml_func.score(X_test,Y_test)
+
+  #return (X_train,Y_train,X_test,Y_test)
+  return score
+
+
+
 # 'sentiment analysis' w/ tags, captions, comment (time,text) tuples
 
 def sentiment_analysis():
@@ -126,6 +229,8 @@ def sentiment_analysis():
   # END_YOUR_CODE
 
   return None
+
+
 
 # 'location clustering' w/ longitude, latitude, location name
 
@@ -137,6 +242,8 @@ def location_clustering():
   
   return None
 
+
+
 # 'image relevancy' w/ (last comment time - image creation time), comment count, comment (time,text) tuples, followed by count, likes count
 
 def image_relevancy():
@@ -146,6 +253,8 @@ def image_relevancy():
   # END_YOUR_CODE
   
   return None
+
+
 
 # 'association rules' w/ image, filter, location
 
