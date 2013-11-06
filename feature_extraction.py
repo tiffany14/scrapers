@@ -1,5 +1,9 @@
 from sklearn import svm
 from sklearn import linear_model
+from sklearn import hmm
+# For the sentiment analysis API
+from urllib2 import urlopen
+import json
 
 import copy
 import math
@@ -49,7 +53,7 @@ DATUM_SPLIT_SIZE = 18
 
 
 
-def extract_from_tsv(filename=DEFAULT_TSV_FILE, max_limit = None):
+def extract_from_tsv(f+ilename=DEFAULT_TSV_FILE, max_limit = None):
   f         = open(filename, 'r')
   key_line  = f.readline()
   key_names = key_line.strip().split('\t')
@@ -166,18 +170,26 @@ def basic_numerical_feature_extractor(data_point):
   return feature_vector
 
 
-
+# PRELIMINARY PUSH: NO IDEA IF THIS WORKS OR NOT
 # 'sentiment analysis' w/ tags, captions, comment (time,text) tuples
-
-def sentiment_analysis():
+def sentiment_classifier(text):
+	address = 'http://text-processing.com/api/sentiment/' # sentiment analysis API
+	data = urllib.urlencode(text)
+	response = urllib2.urlopen(address, data)
+	response = response.read()
+	label = response["label"] # either "pos", "neg", or "neutral"
+	return label
+	
+def sentiment_analysis(data_point):
 
   # BEGIN_YOUR_CODE (around ??? lines of code expected)
-  raise Exception("Not implemented yet")
+  feature_vector = []
+  data_keys = ["tag_list","caption_text", "comment_time_text_encoding"]
+  for data_key in numerics_data_keys:
+	sentiment_label = sentiment_classifier(data_point[data_key])
+    feature_vector.append(data_point[data_key], sentiment_label)
+  return feature_vector 
   # END_YOUR_CODE
-
-  return None
-
-
 
 # 'location clustering' w/ longitude, latitude, location name
 
